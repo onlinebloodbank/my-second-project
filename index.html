@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Blood Bank</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    header {
+      background-color: #d32f2f;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      background-color: #b71c1c;
+      text-align: center;
+      padding: 0.5rem 0;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .section {
+      padding: 30px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .form-section {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #d32f2f;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #b71c1c;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #d32f2f;
+      color: white;
+    }
+    .hidden {
+      display: none;
+    }
+    .success-box {
+      text-align: center;
+      background: #e8f5e9;
+      padding: 40px;
+      border-radius: 10px;
+    }
+    .success-box h2 {
+      color: #4caf50;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Online Blood Bank</h1>
+    <p>Donate blood, save lives</p>
+  </header>
+
+  <nav>
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('register')">Register</a>
+    <a onclick="showPage('donors')">Donors List</a>
+  </nav>
+
+  <!-- Home Page -->
+  <div class="section" id="homePage">
+    <h2>Welcome to Online Blood Bank</h2>
+    <p>We are an online platform connecting blood donors with people in need. 
+       Join us today and be a hero by donating blood ❤️</p>
+  </div>
+
+  <!-- Registration Page -->
+  <div class="section form-section hidden" id="registerPage">
+    <h2>Donor Registration</h2>
+    <form id="donorForm">
+      <label>Full Name:</label>
+      <input type="text" id="name" required>
+
+      <label>Age:</label>
+      <input type="number" id="age" required>
+
+      <label>Blood Group:</label>
+      <select id="bloodgroup" required>
+        <option value="">--Select--</option>
+        <option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option>
+        <option>O+</option><option>O-</option>
+        <option>AB+</option><option>AB-</option>
+      </select>
+
+      <label>Any Health Issues:</label>
+      <select id="health" required>
+        <option value="">--Select--</option>
+        <option>No</option><option>Yes</option>
+      </select>
+
+      <label>Any Bad Habits:</label>
+      <select id="habits" required>
+        <option value="">--Select--</option>
+        <option>No</option><option>Yes</option>
+      </select>
+
+      <label>Gender:</label>
+      <select id="gender" required>
+        <option value="">--Select--</option>
+        <option>Male</option><option>Female</option>
+      </select>
+
+      <label>Occupation:</label>
+      <input type="text" id="occupation" required>
+
+      <label>Phone Number:</label>
+      <input type="tel" id="phone" required>
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <!-- Success Page -->
+  <div class="section hidden" id="successPage">
+    <div class="success-box">
+      <h2>Registration Successful 🎉</h2>
+      <p>Thank you for registering as a donor. Together, we save lives!</p>
+      <button onclick="showPage('donors')">View Donors List</button>
+      <button onclick="showPage('home')">Go Home</button>
+    </div>
+  </div>
+
+  <!-- Donors List Page -->
+  <div class="section hidden" id="donorsPage">
+    <h2>Registered Donors</h2>
+    <table id="donorTable">
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Blood Group</th>
+        <th>Gender</th>
+        <th>Occupation</th>
+        <th>Phone</th>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    function showPage(page) {
+      document.getElementById("homePage").classList.add("hidden");
+      document.getElementById("registerPage").classList.add("hidden");
+      document.getElementById("successPage").classList.add("hidden");
+      document.getElementById("donorsPage").classList.add("hidden");
+
+      if (page === "home") document.getElementById("homePage").classList.remove("hidden");
+      if (page === "register") document.getElementById("registerPage").classList.remove("hidden");
+      if (page === "success") document.getElementById("successPage").classList.remove("hidden");
+      if (page === "donors") {
+        document.getElementById("donorsPage").classList.remove("hidden");
+        loadDonors();
+      }
+    }
+
+    const form = document.getElementById("donorForm");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const age = document.getElementById("age").value;
+      const health = document.getElementById("health").value;
+
+      if (age < 18) {
+        alert("You must be at least 18 years old to register.");
+        return;
+      }
+      if (health === "Yes") {
+        alert("Sorry, people with health issues cannot register.");
+        return;
+      }
+
+      const donor = {
+        name: document.getElementById("name").value,
+        age: age,
+        bloodgroup: document.getElementById("bloodgroup").value,
+        health: health,
+        habits: document.getElementById("habits").value,
+        gender: document.getElementById("gender").value,
+        occupation: document.getElementById("occupation").value,
+        phone: document.getElementById("phone").value
+      };
+
+      let donors = JSON.parse(localStorage.getItem("donors")) || [];
+      donors.push(donor);
+      localStorage.setItem("donors", JSON.stringify(donors));
+
+      form.reset();
+      showPage("success");
+    });
+
+    function loadDonors() {
+      const donors = JSON.parse(localStorage.getItem("donors")) || [];
+      const table = document.getElementById("donorTable");
+
+      // clear old rows
+      table.innerHTML = `
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Blood Group</th>
+          <th>Gender</th>
+          <th>Occupation</th>
+          <th>Phone</th>
+        </tr>
+      `;
+
+      donors.forEach(donor => {
+        const row = table.insertRow();
+        row.insertCell(0).innerText = donor.name;
+        row.insertCell(1).innerText = donor.age;
+        row.insertCell(2).innerText = donor.bloodgroup;
+        row.insertCell(3).innerText = donor.gender;
+        row.insertCell(4).innerText = donor.occupation;
+        row.insertCell(5).innerText = donor.phone;
+      });
+    }
+
+    // show home page on load
+    showPage("home");
+  </script>
+
+</body>
+</html>
