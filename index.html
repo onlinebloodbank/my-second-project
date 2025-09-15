@@ -5,86 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Online Blood Bank</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f9f9f9;
-    }
-    header {
-      background-color: #d32f2f;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    nav {
-      background-color: #b71c1c;
-      text-align: center;
-      padding: 0.5rem 0;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .section {
-      padding: 30px 20px;
-      max-width: 900px;
-      margin: auto;
-    }
-    .form-section {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #d32f2f;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #b71c1c;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: white;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background: #d32f2f;
-      color: white;
-    }
-    .hidden {
-      display: none;
-    }
-    .success-box {
-      text-align: center;
-      background: #e8f5e9;
-      padding: 40px;
-      border-radius: 10px;
-    }
-    .success-box h2 {
-      color: #4caf50;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f9f9f9; }
+    header { background-color: #d32f2f; color: white; padding: 1rem; text-align: center; }
+    nav { background-color: #b71c1c; text-align: center; padding: 0.5rem 0; }
+    nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; cursor: pointer; }
+    .section { padding: 30px 20px; max-width: 900px; margin: auto; }
+    .form-section { background-color: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+    input, select { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; }
+    button { background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #b71c1c; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #d32f2f; color: white; }
+    .hidden { display: none; }
+    .success-box { text-align: center; background: #e8f5e9; padding: 40px; border-radius: 10px; }
+    .success-box h2 { color: #4caf50; }
   </style>
 </head>
 <body>
@@ -112,13 +47,13 @@
     <h2>Donor Registration</h2>
     <form id="donorForm">
       <label>Full Name:</label>
-      <input type="text" id="name" required>
+      <input type="text" id="name" name="name" required>
 
       <label>Age:</label>
-      <input type="number" id="age" required>
+      <input type="number" id="age" name="age" required>
 
       <label>Blood Group:</label>
-      <select id="bloodgroup" required>
+      <select id="bloodgroup" name="bloodgroup" required>
         <option value="">--Select--</option>
         <option>A+</option><option>A-</option>
         <option>B+</option><option>B-</option>
@@ -127,28 +62,28 @@
       </select>
 
       <label>Any Health Issues:</label>
-      <select id="health" required>
+      <select id="health" name="health" required>
         <option value="">--Select--</option>
         <option>No</option><option>Yes</option>
       </select>
 
       <label>Any Bad Habits:</label>
-      <select id="habits" required>
+      <select id="habits" name="habits" required>
         <option value="">--Select--</option>
         <option>No</option><option>Yes</option>
       </select>
 
       <label>Gender:</label>
-      <select id="gender" required>
+      <select id="gender" name="gender" required>
         <option value="">--Select--</option>
         <option>Male</option><option>Female</option>
       </select>
 
       <label>Occupation:</label>
-      <input type="text" id="occupation" required>
+      <input type="text" id="occupation" name="occupation" required>
 
       <label>Phone Number:</label>
-      <input type="tel" id="phone" required>
+      <input type="tel" id="phone" name="phone" required>
 
       <button type="submit">Register</button>
     </form>
@@ -212,50 +147,48 @@
         return;
       }
 
-      const donor = {
-        name: document.getElementById("name").value,
-        age: age,
-        bloodgroup: document.getElementById("bloodgroup").value,
-        health: health,
-        habits: document.getElementById("habits").value,
-        gender: document.getElementById("gender").value,
-        occupation: document.getElementById("occupation").value,
-        phone: document.getElementById("phone").value
-      };
+      const donorData = new FormData(form);
 
-      let donors = JSON.parse(localStorage.getItem("donors")) || [];
-      donors.push(donor);
-      localStorage.setItem("donors", JSON.stringify(donors));
-
-      form.reset();
-      showPage("success");
+      fetch("saveDonor.php", {
+        method: "POST",
+        body: donorData
+      })
+      .then(response => response.text())
+      .then(data => {
+        if (data.includes("success")) {
+          form.reset();
+          showPage("success");
+        } else {
+          alert("Error saving donor: " + data);
+        }
+      });
     });
 
     function loadDonors() {
-      const donors = JSON.parse(localStorage.getItem("donors")) || [];
-      const table = document.getElementById("donorTable");
-
-      // clear old rows
-      table.innerHTML = `
-        <tr>
-          <th>Name</th>
-          <th>Age</th>
-          <th>Blood Group</th>
-          <th>Gender</th>
-          <th>Occupation</th>
-          <th>Phone</th>
-        </tr>
-      `;
-
-      donors.forEach(donor => {
-        const row = table.insertRow();
-        row.insertCell(0).innerText = donor.name;
-        row.insertCell(1).innerText = donor.age;
-        row.insertCell(2).innerText = donor.bloodgroup;
-        row.insertCell(3).innerText = donor.gender;
-        row.insertCell(4).innerText = donor.occupation;
-        row.insertCell(5).innerText = donor.phone;
-      });
+      fetch("getDonors.php")
+        .then(response => response.json())
+        .then(donors => {
+          const table = document.getElementById("donorTable");
+          table.innerHTML = `
+            <tr>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Blood Group</th>
+              <th>Gender</th>
+              <th>Occupation</th>
+              <th>Phone</th>
+            </tr>
+          `;
+          donors.forEach(donor => {
+            const row = table.insertRow();
+            row.insertCell(0).innerText = donor.name;
+            row.insertCell(1).innerText = donor.age;
+            row.insertCell(2).innerText = donor.bloodgroup;
+            row.insertCell(3).innerText = donor.gender;
+            row.insertCell(4).innerText = donor.occupation;
+            row.insertCell(5).innerText = donor.phone;
+          });
+        });
     }
 
     // show home page on load
@@ -263,4 +196,4 @@
   </script>
 
 </body>
-</html>
+</html>         
